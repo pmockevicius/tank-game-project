@@ -1,4 +1,4 @@
-class Tank {
+class GameItem {
     positionX = 0;
     positionY = 0;
 
@@ -27,7 +27,7 @@ class Tank {
     }
 }
 
-class Player extends Tank {
+class Player extends GameItem {
 
     constructor() {
         super()
@@ -35,22 +35,7 @@ class Player extends Tank {
         this.positionX = 50 - this.width / 2
  
     }
-        
-
-    detectCollision(enemy) {
-        if (
-            this.positionX < enemy.positionX + enemy.width &&
-            this.positionX + this.width > enemy.positionX &&
-            this.positionY < enemy.positionY + enemy.height &&
-            this.height + this.positionY > enemy.positionY
-        ) {
-            return true
-        } else { return false }
-    }
-
-    getNodeElement() {
-        return this.getHtmlElement('/images/player-tank.jpg')
-    }
+       
 
     moveLeft() {
         if (this.positionX > 0) {
@@ -87,9 +72,24 @@ class Player extends Tank {
             this.element.style.rotate = this.rotate + "deg";
         }
     }
+
+    detectCollision(enemy) {
+        if (
+            this.positionX < enemy.positionX + enemy.width &&
+            this.positionX + this.width > enemy.positionX &&
+            this.positionY < enemy.positionY + enemy.height &&
+            this.height + this.positionY > enemy.positionY
+        ) {
+            return true
+        } else { return false }
+    }
+
+    getNodeElement() {
+        return this.getHtmlElement('/images/player-tank.jpg')
+    }
 }
 
-class Enemy extends Tank {
+class Enemy extends GameItem {
     counter = 0
     timeWindow = 0
     changeDirectionAfter = 2000
@@ -167,6 +167,24 @@ class Enemy extends Tank {
     }
 }
 
+class Bullet extends GameItem{
+
+    constructor(x,y) {
+        super()
+        this.positionY =  x + 10
+        this.positionX =  y 
+    }
+
+    // this.element.style.height = 4
+
+
+    getNodeElement() {
+        return this.getHtmlElement('/images/bullet_up.png')
+    }
+
+
+}
+
 class Game {
 
     //Three levels by default
@@ -198,6 +216,8 @@ class Game {
     }
 
     enemies = []
+
+    bullets = []
 
     timeWindow = 100
 
@@ -247,6 +267,7 @@ class Game {
         this.player = new Player()
 
         this.stage.appendChild(this.player.getNodeElement())
+        
 
     }
 
@@ -257,9 +278,13 @@ class Game {
             this.enemies.push(this.enemy)
 
             this.stage.appendChild(this.enemy.getNodeElement())
-
         }
+    }
 
+    addBullet(x,y){
+        this.bullet = new Bullet(x,y)
+
+        this.stage.appendChild(this.bullet.getNodeElement())
     }
 
     attachEventListeners() {
@@ -271,15 +296,25 @@ class Game {
         }, false);
 
         document.addEventListener("keydown", (e) => {
+
+            console.log(e.key)
             if (e.key === "ArrowLeft") {
                 this.player.moveLeft();
             } else if (e.key === "ArrowRight") {
                 this.player.moveRight();
+                console.log("right pressed ")
             }
             else if (e.key === "ArrowUp") {
                 this.player.moveUp();
-            } else if (e.key === "ArrowDown") {
+            } 
+            else if (e.key === "ArrowDown") {
                 this.player.moveDown();
+            } 
+            else if (e.key === " "){
+                console.log(this.player.positionY)
+                this.addBullet(this.player.positionY,this.player.positionX)
+                //  
+
             }
 
         });

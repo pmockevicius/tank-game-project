@@ -3,5 +3,8 @@ h1 {
 }
 
 #stage {
-    background-color:black
+    background-color:black;
+    height: 100vh;
+    width: 100vw;
+    
 }
